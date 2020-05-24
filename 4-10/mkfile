@@ -1,0 +1,6 @@
+</$objtype/mkfile
+4-10:	4-10.$O
+	$LD $LDFLAGS -o $target $prereq
+%.$O:	%.c
+	$CC $CFLAGS $stem.c
+</sys/src/cmd/mkone
