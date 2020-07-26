@@ -16,7 +16,7 @@ main()
 {
 	char wd[MAX];
 
-	while (getwd(wd, MAX) > 0)
+	while (getwd2(wd, MAX) > 0)
 		printf("word: %s\n", wd);
 }
 
@@ -29,13 +29,13 @@ void ungetch(int c)
 {
 	if (bufp >= MAX)
 		printf("ungetch: overflow\n");
-	else
-		buf[bufp++] = c;		
+	else 
+		buf[bufp++] = c;
 }
 
 int validstart(int c)
 {
-	return (isalpha(c) || c == '_' || c == '#' || isspace(c)) ? 1 : 0;
+	return (isalpha(c) || c == '_' || isspace(c)) ? 1 : 0;
 }
 
 int validc(int c)
@@ -61,3 +61,30 @@ term:	*w = 0;
 	return word[0];
 }
 
+int getwd2(char *word, int lim)
+{
+	int c;
+	char *w = word;
+
+	while (isspace(c = getch()))
+		;
+	if (c == EOF) {
+		*w = 0;
+		return word[0];
+	}
+	while (!validstart(c)) {
+		c = getch();
+		if (c == EOF) {
+		*w = 0;
+		return word[0];
+		}
+	}
+	*w++ = c;
+	for ( ; --lim > 0; w++) 
+		if (!validc((*w = getch()))) {
+			ungetch(*w);
+			break;
+		}				
+	*w = 0;
+	return word[0];
+}
