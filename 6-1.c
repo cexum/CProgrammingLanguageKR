@@ -5,7 +5,8 @@
 
 int getwd(char*, int);
 int getch(void);
-int isvalid(int c);
+int validstart(int);
+int isvalid(int);
 void ungetch(int);
 
 char	buf[MAX];
@@ -15,7 +16,7 @@ main()
 {
 	char wd[MAX];
 
-	while (getwd2(wd, MAX) > 0)
+	while (getwd(wd, MAX) > 0)
 		printf("word: %s\n", wd);
 }
 
@@ -34,19 +35,15 @@ void ungetch(int c)
 
 int validstart(int c)
 {
-	if (isalpha(c) || c == '_' || c =='#')
-		return 1;
-	return 0;
+	return (isalpha(c) || c == '_' || c == '#') ? 1 : 0;
 }
 
 int validc(int c)
 {
-	if (isalnum(c) || c == '_')
-		return 1;
-	return 0;
+	return (isalnum(c) || c == '_') ? 1 : 0;
 }
 
-int getwd2(char *word, int lim)
+int getwd(char *word, int lim)
 {
 	int c;
 	char *w = word;
@@ -74,25 +71,3 @@ int getwd2(char *word, int lim)
 	return word[0];
 }
 
-int getwd(char *word, int lim)
-{
-	char *w = word;
-	int c;
-
-	while (isspace(c = getch()))
-		;
-	if (c != EOF)
-		*w++ = c;
-	
-	if (!isalpha(c)) {
-		*w = '\0';
-		return c;
-	}
-	for ( ; --lim > 0; w++)
-		if (!isalnum(*w = getch())) {
-			ungetch(*w);
-			break;
-		}
-	*w = '\0';
-	return word[0];
-}
