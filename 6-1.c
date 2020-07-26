@@ -35,7 +35,7 @@ void ungetch(int c)
 
 int validstart(int c)
 {
-	return (isalpha(c) || c == '_' || c == '#') ? 1 : 0;
+	return (isalpha(c) || c == '_' || c == '#' || isspace(c)) ? 1 : 0;
 }
 
 int validc(int c)
@@ -48,12 +48,8 @@ int getwd(char *word, int lim)
 	int c;
 	char *w = word;
 
-	while (isspace(c = getch()))
-		;
-	while (!validstart(c)) 
-		if (c != EOF)
-			c = getch();
-		else 
+	while (!validstart((c = getch()))) 
+		if (c == EOF)
 			goto term;
 	*w++ = c;
 	for ( ; --lim > 0; w++) 
