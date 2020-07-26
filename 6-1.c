@@ -50,24 +50,18 @@ int getwd(char *word, int lim)
 
 	while (isspace(c = getch()))
 		;
-	if (c == EOF) {
-		*w = 0;
-		return word[0];
-	}
-	while (!validstart(c)) {
-		c = getch();
-		if (c == EOF) {
-		*w = 0;
-		return word[0];
-		}
-	}
+	while (!validstart(c)) 
+		if (c != EOF)
+			c = getch();
+		else 
+			goto term;
 	*w++ = c;
 	for ( ; --lim > 0; w++) 
 		if (!validc((*w = getch()))) {
 			ungetch(*w);
 			break;
 		}				
-	*w = 0;
+term:	*w = 0;
 	return word[0];
 }
 
