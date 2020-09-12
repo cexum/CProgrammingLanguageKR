@@ -5,8 +5,8 @@
 
 int getwd(char*, int);
 int getch(void);
-int validstart(int);
-int isvalid(int);
+int isspace(int);
+int isalph(int);
 void ungetch(int);
 
 char	buf[MAX];
@@ -16,8 +16,20 @@ main()
 {
 	char wd[MAX];
 
-	while (getwd2(wd, MAX) > 0)
+	while (getwd(wd, MAX) > 0)
 		printf("word: %s\n", wd);
+}
+
+int isalph(int c)
+{
+	if (c >= 65 && c <= 90 || c >= 97 && c <= 122)
+		return 1;
+	return 0;
+}
+
+int isspace(int c)
+{
+	return (c == ' ') ? 1 : 0;
 }
 
 int getch(void)
@@ -33,58 +45,21 @@ void ungetch(int c)
 		buf[bufp++] = c;
 }
 
-int validstart(int c)
-{
-	return (isalpha(c) || c == '_' || isspace(c)) ? 1 : 0;
-}
-
-int validc(int c)
-{
-	return (isalnum(c) || c == '_') ? 1 : 0;
-}
-
 int getwd(char *word, int lim)
 {
 	int c;
 	char *w = word;
 
-	while (!validstart((c = getch()))) 
-		if (c == EOF)
-			goto term;
-	*w++ = c;
-	for ( ; --lim > 0; w++) 
-		if (!validc((*w = getch()))) {
-			ungetch(*w);
-			break;
-		}				
-term:	*w = 0;
-	return word[0];
-}
-
-int getwd2(char *word, int lim)
-{
-	int c;
-	char *w = word;
-
-	while (isspace(c = getch()))
-		;
-	if (c == EOF) {
-		*w = 0;
-		return word[0];
-	}
-	while (!validstart(c)) {
-		c = getch();
-		if (c == EOF) {
-		*w = 0;
-		return word[0];
+	while (!isalph(c = getch()))
+		if (c < 0) { //not detecting EOF??
+			*w = 0;
+			return word[0];
 		}
+	while (isalph(c)) {
+		*w++ = c;
+		c = getch();
 	}
-	*w++ = c;
-	for ( ; --lim > 0; w++) 
-		if (!validc((*w = getch()))) {
-			ungetch(*w);
-			break;
-		}				
+	ungetch(c);
 	*w = 0;
 	return word[0];
 }
