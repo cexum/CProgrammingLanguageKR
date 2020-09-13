@@ -23,6 +23,7 @@ void		treeprint(Tnode *);
 int		getwd(char *, int);
 int		isalph(int);
 int		getch(int);
+void		ungetch();
 
 char		buf[RSIZE];
 char		*sp, *ep;
@@ -84,8 +85,14 @@ int getwd(char *word, int fd)
 			goto term;
 	for ( ; isalph(c); c = getch(fd))
 		*w++ = c;
+	ungetch();
 term:	*w = 0;
 	return word[0];
+}
+
+void ungetch()
+{
+	sp--;
 }
 
 int getch(int fd)
