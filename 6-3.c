@@ -31,6 +31,7 @@ Llist		*addlist(Llist *);
 void		treeprint(Tnode *);
 void		listprint(Llist *);
 int		getwd(char *, int);
+int		badwd(char*);
 int		isalph(int);
 int		getch(int);
 void		ungetch();
@@ -49,7 +50,10 @@ int main(int argc, char **argv)
 		return -1;
 	}
 	while (getwd(wd, fd)) 
-		root = addtree(root, wd);
+		if (badwd(wd))
+			continue;
+		else
+			root = addtree(root, wd);
 	treeprint(root);
 	return 0;
 }
@@ -89,15 +93,6 @@ Llist *addlist(Llist *p)
 	return p;
 }
 
-Llist *addlist2(Llist *list) 
-{
-	if (list->next)
-		return list->next = addlist(list->next);
-	list->next = lalloc();
-	list->next->line = ln;
-	return list;
-}
-
 void listprint(Llist *list)
 {
 
@@ -122,7 +117,7 @@ void treeprint(Tnode *p)
 {
 	if (p) {
 		treeprint(p->left);
-		printf("%s\t", p->word);
+		printf("%15s\t", p->word);
 		listprint(p->list);
 		treeprint(p->right);	
 	}
@@ -209,3 +204,19 @@ int scmp(char *s1, char *s2)
 	return s1[c] - s2[c];
 }
 
+/* words to filter */
+int badwd(char *s)
+{
+	int i;
+	static char *bad[] = {
+		"and", "but", "the",
+		"a", "an", "they",
+		"them", "we", "us",
+		"I", "you"
+	};
+
+	for (i = 0; bad[i]; i++)
+		if (scmp(s, bad[i]) == 0)
+			return 1;
+	return 0;	
+}
